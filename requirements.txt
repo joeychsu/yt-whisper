@@ -2,3 +2,4 @@ transformers
 git+https://github.com/openai/whisper.git
 pytube
 gradio
+ffmpeg-python

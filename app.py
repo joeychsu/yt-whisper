@@ -1,6 +1,8 @@
 import gradio as gr
 import whisper
 from pytube import YouTube
+from pydub import AudioSegment
+import time
 
 loaded_model = whisper.load_model("large")
 current_size = 'large'
@@ -22,10 +24,16 @@ def hundred2sixty(str1) :
 def inference(link):
   global loaded_model
   yt = YouTube(link)
+  print("-----------------------------------------------------------")
+  print("YouTube link = %s" %(link))
   video_path = yt.streams.filter(file_extension='mp4')[0].download(filename="video.mp4")
   audio_path = yt.streams.filter(only_audio=True)[0].download(filename="audio.mp4")
+  sound = AudioSegment.from_file("audio.mp4",format="mp4")
+  duration = sound.duration_seconds
   options = whisper.DecodingOptions(without_timestamps=False)
+  start = time.time()
   results = loaded_model.transcribe(audio_path)
+  end = time.time()
   ofp = open("video.srt",'w')
   for seg_info in results['segments'] : 
     ofp.write(str(seg_info["id"])+"\n")
@@ -39,7 +47,15 @@ def inference(link):
     ofp.write(str(seg_info["text"])+"\n")
     ofp.write("\n")
   ofp.close()
-  return results['text']
+  spend_time = end - start
+  rtf = spend_time / duration
+  print("time：%0.2f second" % (spend_time))
+  print("RTF ：%0.2f " % (rtf))
+  print("-----------------------------------------------------------")
+  final_results =  "time："+str(round(spend_time,2))+" second\n"
+  final_results += "RTF ："+str(round(rtf,2))+" \n"
+  final_results += results['text']
+  return final_results
 
 def change_model(size):
   global current_size, loaded_model

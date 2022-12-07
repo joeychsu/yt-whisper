@@ -1,6 +1,10 @@
 # yt-whisper
 
 ## 環境安裝 & 執行
+ - 安裝 ubuntu 環境下需要的套件 : 
+```
+sudo apt-get install ffmpeg
+```
  - 先安裝 conda : 
 ```
 conda create --name yt-whisper python=3.8

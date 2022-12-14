@@ -30,9 +30,9 @@ def inference(link):
   audio_path = yt.streams.filter(only_audio=True)[0].download(filename="audio.mp4")
   sound = AudioSegment.from_file("audio.mp4",format="mp4")
   duration = sound.duration_seconds
-  options = whisper.DecodingOptions(without_timestamps=False)
   start = time.time()
-  results = loaded_model.transcribe(audio_path)
+  # task = [transcribe/translate] ; language = [english/chinese]
+  results = loaded_model.transcribe(audio=audio_path, without_timestamps=False, task="transcribe", language="chinese")
   end = time.time()
   ofp = open("video.srt",'w')
   for seg_info in results['segments'] : 
@@ -106,4 +106,4 @@ with block:
           link.change(populate_metadata, inputs=[link], outputs=[img, title])
           sz.change(change_model, inputs=[sz], outputs=[])
 
-block.launch(debug=True, share=True)
+block.launch(debug=True, share=True, server_port=7860, auth=("zzz", "1234"))
